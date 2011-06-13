@@ -79,7 +79,7 @@ EOC
   say OUT $vout;
 
   my $arg0 = _getFirstDataArg($vout);
-  say OUT _makeInplace($vout, $arg0);
+  say OUT _makeInplace_mulVector($vout, $arg0);
   say OUT _makeVaccum ($vout);
 }
 
@@ -231,7 +231,8 @@ sub _multiplicationVersions
   my $arg0 = _getFirstDataArg($vout);
 
   my $funcs = $vout . "\n";
-  $funcs .= _makeInplace($vout, $arg0, $n, $m) . "\n";
+  $funcs .= (defined $n ?
+             _makeInplace_mulVector($vout, $arg0, $n, $m) : _makeInplace_mulMatrix($vout) ) . "\n";
   $funcs .= _makeVaccum ($vout) . "\n";
   $funcs .= (defined $n ?
              _makeScaled_mulVector ($funcs) : _makeScaled_mulMatrix ($funcs) ) . "\n";
@@ -271,7 +272,7 @@ sub _getFirstDataArg
   return $arg0;
 }
 
-sub _makeInplace
+sub _makeInplace_mulVector
 {
   my $v       = shift;
   my $arg0    = shift;
@@ -308,6 +309,24 @@ sub _makeInplace
     my $tempDef = "  double t[$nt] = {" . join(', ', map {"${arg0}[$_]"} 0..$nt-1) . "};";
     $v =~ s/^{$/{\n$tempDef/mg;
   }
+
+  return $v;
+}
+sub _makeInplace_mulMatrix
+{
+  my $v       = shift;
+
+  # rename functions
+  $v =~ s/_vout//gm;
+
+  # get rid of the 'vout argument'
+  $v =~ s/, double\* restrict vout//gm;
+
+  # un-const first argument
+  $v =~ s/^(static inline.*\(.*?)const (double.*)$/$1$2/gm;
+
+  # use the first argument instead of vout
+  $v =~ s/,[^\),]*vout[^\),]*([\),])/$1/gm;
 
   return $v;
 }
@@ -356,6 +375,9 @@ sub _makeScaled_mulMatrix
 
   # apply the scaling. This is simply an argument to the vector function I call
   $f =~ s/^(\s*mul_.*)(\).*)/$1, scale$2/gm;
+
+  # apply the scaling. Call the _scaled vector function
+  $f =~ s/^(\s*mul_.*?)(\s*\()/${1}_scaled$2/gm;
 
   return $f;
 }
