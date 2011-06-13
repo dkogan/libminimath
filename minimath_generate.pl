@@ -49,7 +49,7 @@ sub norms
 static inline double norm2_vec(int n, const double* restrict a)
 {
   double dot = 0.0;
-  for(int i=0; i<$n; i++)
+  for(int i=0; i<n; i++)
     dot += a[i]*a[i];
   return dot;
 }
@@ -77,7 +77,7 @@ EOC
   say OUT $vout;
 
   my $arg0 = _getFirstDataArg($vout);
-  say OUT _makeInplace($vout, $n, $n, $arg0);
+  say OUT _makeInplace($vout, $arg0);
   say OUT _makeVaccum ($vout);
 }
 
@@ -174,7 +174,7 @@ sub _multiplicationVersions
   my $arg0 = _getFirstDataArg($vout);
 
   my $funcs = $vout . "\n";
-  $funcs .= _makeInplace($vout, $n, $m, $arg0, 'withtmp') . "\n";
+  $funcs .= _makeInplace($vout, $arg0, $n, $m) . "\n";
   $funcs .= _makeVaccum ($vout) . "\n";
   $funcs .= _makeScaled ($funcs) . "\n";
 
@@ -216,10 +216,9 @@ sub _getFirstDataArg
 sub _makeInplace
 {
   my $v       = shift;
+  my $arg0    = shift;
   my $n       = shift;
   my $m       = shift;
-  my $arg0    = shift;
-  my $withtmp = shift;
 
   # rename functions
   $v =~ s/_vout//gm;
@@ -234,8 +233,11 @@ sub _makeInplace
   $v =~ s/vout/$arg0/gm;
 
   # if we're asked to make some temporary variables, do it
-  if($withtmp)
+  if(defined $n)
   {
+    # if no $m is given, use $m;
+    $m //= $n;
+
     my $nt = min($n-1,$m);
 
     # use the temporaries instead of the main variable when possible
