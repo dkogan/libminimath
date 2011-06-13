@@ -22,6 +22,7 @@ foreach my $n(@sizes)
 {
   matrixVectorSym($n);
   foreach my $m (@sizes){ matrixVectorGen($n, $m) }
+  matrixMatrixSym($n);
 }
 
 close OUT;
@@ -164,6 +165,27 @@ EOC
   print OUT _multiplicationVersions($vout, $m,$n);
 }
 
+sub matrixMatrixSym
+{
+  my $n = shift;
+
+  # I now make NxM matrix-vector multiplication. I describe matrices math-style
+  # with the number of rows first (NxM has N rows, M columns). I store the
+  # matrices row-first and treat vectors as row-vectors. Thus these functons
+  # compute v*A where v is the row vector and A is the NxM matrix
+
+  my $vout = <<EOC;
+// general Nx$n matrix by symmetric ${n}x$n, written into a new Nx$n
+static inline void mul_genN${n}_sym${n}${n}_vout(int m, const double* restrict v, const double* restrict s, double* restrict vout)
+{
+  for(int i=0; i<m; i++)
+    mul_vec${n}_sym${n}${n}_vout(v + 3*i, s, vout + 3*i);
+}
+EOC
+
+  print OUT _multiplicationVersions($vout);
+}
+
 
 sub _multiplicationVersions
 {
@@ -176,7 +198,8 @@ sub _multiplicationVersions
   my $funcs = $vout . "\n";
   $funcs .= _makeInplace($vout, $arg0, $n, $m) . "\n";
   $funcs .= _makeVaccum ($vout) . "\n";
-  $funcs .= _makeScaled ($funcs) . "\n";
+  $funcs .= (defined $n ?
+             _makeScaled_mulVector ($funcs) : _makeScaled_mulMatrix ($funcs) ) . "\n";
 
   return $funcs;
 }
@@ -270,7 +293,7 @@ sub _makeVaccum
   return $v;
 }
 
-sub _makeScaled
+sub _makeScaled_mulVector
 {
   my $f = shift;
 
@@ -286,10 +309,21 @@ sub _makeScaled
   return $f;
 }
 
+sub _makeScaled_mulMatrix
+{
+  my $f = shift;
 
+  # rename functions
+  $f =~ s/^(static inline .*)(\s*\()/${1}_scaled$2/gm;
 
+  # add the scale argument
+  $f =~ s/^(static inline .*)\)$/$1, double scale)/gm;
 
+  # apply the scaling. This is simply an argument to the vector function I call
+  $f =~ s/^(\s*mul_.*)(\).*)/$1, scale$2/gm;
 
+  return $f;
+}
 
 
 
