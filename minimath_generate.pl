@@ -23,6 +23,7 @@ foreach my $n(@sizes)
   matrixVectorSym($n);
   foreach my $m (@sizes){ matrixVectorGen($n, $m) }
   matrixMatrixSym($n);
+  matrixMatrixGen($n);
 }
 
 close OUT;
@@ -176,15 +177,49 @@ sub matrixMatrixSym
 
   my $vout = <<EOC;
 // general Nx$n matrix by symmetric ${n}x$n, written into a new Nx$n
-static inline void mul_genN${n}_sym${n}${n}_vout(int m, const double* restrict v, const double* restrict s, double* restrict vout)
+static inline void mul_genN${n}_sym${n}${n}_vout(int n, const double* restrict v, const double* restrict s, double* restrict vout)
 {
-  for(int i=0; i<m; i++)
-    mul_vec${n}_sym${n}${n}_vout(v + 3*i, s, vout + 3*i);
+  for(int i=0; i<n; i++)
+    mul_vec${n}_sym${n}${n}_vout(v + $n*i, s, vout + $n*i);
 }
 EOC
 
   print OUT _multiplicationVersions($vout);
 }
+
+sub matrixMatrixGen
+{
+  my $n = shift;
+
+  # I now make NxM matrix-vector multiplication. I describe matrices math-style
+  # with the number of rows first (NxM has N rows, M columns). I store the
+  # matrices row-first and treat vectors as row-vectors. Thus these functons
+  # compute v*A where v is the row vector and A is the NxM matrix
+
+  my $vout = <<EOC;
+// general Nx${n} matrix by general ${n}x${n}, written back into the Nx${n}
+static inline void mul_genN${n}_gen${n}${n}_vout(int n, double* restrict v, const double* restrict m, double* restrict vout)
+{
+  for(int i=0; i<n; i++)
+    mul_vec${n}_gen${n}${n}_vout(v + $n*i, m, vout + $n*i);
+}
+
+// general Nx${n} matrix by general ${n}x${n}, written back into the Nx${n}
+static inline void mul_genN${n}_gen${n}${n}t_vout(int n, double* restrict v, const double* restrict mt, double* restrict vout)
+{
+  for(int i=0; i<n; i++)
+    mul_vec${n}_gen${n}${n}t_vout(v + $n*i, mt, vout + $n*i);
+}
+
+EOC
+
+  print OUT _multiplicationVersions($vout);
+}
+
+
+
+
+
 
 
 sub _multiplicationVersions
