@@ -227,7 +227,7 @@ sub _makeInplace
   $v =~ s/, double\* restrict vout//gm;
 
   # un-const first argument
-  $v =~ s/^(static inline.*\()const (double.*)$/$1$2/gm;
+  $v =~ s/^(static inline.*\(.*?, )const (double.*)$/$1$2/gm;
 
   # use the first argument instead of vout
   $v =~ s/vout/$arg0/gm;
