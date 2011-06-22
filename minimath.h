@@ -101,7 +101,7 @@
 */
 
 #if 0
-#error You really should be using the cof_t functions below to do this. So far Ive only needed the determinant as a part of computing the inverse, and the below functions do this much more efficiently
+#error You really should be using the cofactors functions below to do this. So far Ive only needed the determinant as a part of computing the inverse, and the below functions do this much more efficiently
 static inline double det_sym2(const double* m)
 {
   return m[0]*m[2]-m[1]*m[1];
@@ -357,7 +357,7 @@ Session:
                                       -(m12*m2-m10*m3)*m5)])
 */
 
-static inline double cof_t_sym2(const double* restrict m, double* restrict c)
+static inline double cofactors_sym2(const double* restrict m, double* restrict c)
 {
   c[0] = m[2];
   c[1] = -m[1];
@@ -366,7 +366,7 @@ static inline double cof_t_sym2(const double* restrict m, double* restrict c)
   return m[0]*c[0] + m[1]*c[1];
 }
 
-static inline double cof_t_sym3(const double* restrict m, double* restrict c)
+static inline double cofactors_sym3(const double* restrict m, double* restrict c)
 {
   c[0] = m[3]*m[5]-m[4]*m[4];
   c[1] = m[2]*m[4]-m[1]*m[5];
@@ -378,7 +378,7 @@ static inline double cof_t_sym3(const double* restrict m, double* restrict c)
   return m[0]*c[0] + m[1]*c[1] + m[2]*c[2];
 }
 
-static inline double cof_t_sym4(const double* restrict m, double* restrict c)
+static inline double cofactors_sym4(const double* restrict m, double* restrict c)
 {
   c[0] = m[4]*(m[7]*m[9]-m[8]*m[8])-m[5]*(m[5]*m[9]-m[6]*m[8])+m[6]*(m[5]*m[8]-m[6]*m[7]);
   c[1] = -m[1]*(m[7]*m[9]-m[8]*m[8])+m[2]*(m[5]*m[9]-m[6]*m[8])-m[3]*(m[5]*m[8]-m[6]*m[7]);
@@ -394,7 +394,7 @@ static inline double cof_t_sym4(const double* restrict m, double* restrict c)
   return m[0]*c[0] + m[1]*c[1] + m[2]*c[2] + m[3]*c[3];
 }
 
-static inline double cof_t_sym5(const double* restrict m, double* restrict c)
+static inline double cofactors_sym5(const double* restrict m, double* restrict c)
 {
   c[0] =   m[7]*(-(m[14]*m[7]-m[13]*m[8])*m[9]+m[11]*(m[11]*m[7]-m[10]*m[8])+(m[10]*m[14]-m[11]*m[13])*m[6])-m[8]*(-(m[13]*m[7]-m[12]*m[8])*m[9]+m[10]*(m[11]*m[7]-m[10]*m[8])+(m[10]*m[13]-m[11]*m[12])*m[6])+m[5]*((m[12]*m[14]-m[13]*m[13])*m[9]-m[10]*(m[10]*m[14]-m[11]*m[13])+m[11]*(m[10]*m[13]-m[11]*m[12]))-m[6]*(-m[10]*(m[14]*m[7]-m[13]*m[8])+m[11]*(m[13]*m[7]-m[12]*m[8])+(m[12]*m[14]-m[13]*m[13])*m[6]);
   c[1] =   -m[3]*(-(m[14]*m[7]-m[13]*m[8])*m[9]+m[11]*(m[11]*m[7]-m[10]*m[8])+(m[10]*m[14]-m[11]*m[13])*m[6])+m[4]*(-(m[13]*m[7]-m[12]*m[8])*m[9]+m[10]*(m[11]*m[7]-m[10]*m[8])+(m[10]*m[13]-m[11]*m[12])*m[6])-m[1]*((m[12]*m[14]-m[13]*m[13])*m[9]-m[10]*(m[10]*m[14]-m[11]*m[13])+m[11]*(m[10]*m[13]-m[11]*m[12]))+m[2]*(-m[10]*(m[14]*m[7]-m[13]*m[8])+m[11]*(m[13]*m[7]-m[12]*m[8])+(m[12]*m[14]-m[13]*m[13])*m[6]);
