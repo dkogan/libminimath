@@ -6,4 +6,9 @@ minimath_generated.h: minimath_generate.pl
 
 unittest: unittest.o
 
+clean:
+	rm -rf *.o unittest
+
+.PNONY: clean
+
 -include *.d

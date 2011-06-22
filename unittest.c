@@ -155,6 +155,30 @@ int main(void)
     assert_vector_elemeq3(v5[i], -3.0*a_x_m35t[i] + a5[i]);
   }
 
+  // now some matrix inversions
+  {
+    double s3[] =
+      { 0.471011, 1.6661985 , 0.98615889,
+                  0.32707543, 1.0342404,
+                              0.49936779};
+
+    double cofactors[6];
+    double m[9];
+    double det = cofactors_sym3(s3, cofactors);
+
+    assert_eq(det, 1.26747089766342);
+
+    // multiplied together, these should be identity*determinant
+    mul_sym33_sym33_scaled_out(s3, cofactors, m, 1.0/det);
+
+    for(int i=0; i<9; i++)
+    {
+      assert_eq(m[i], i%4 ? 0 : 1);
+    }
+
+
+  }
+
   printf("all tests pass!\n");
 
   return 0;
