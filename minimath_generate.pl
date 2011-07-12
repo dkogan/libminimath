@@ -26,6 +26,9 @@ foreach my $n(@sizes)
   matrixMatrixGen($n);
 }
 
+# this is only defined for N=3. I haven't made the others yet and I don't yet need them
+matrixMatrixMatrixSym(3);
+
 close OUT;
 
 
@@ -185,6 +188,58 @@ static inline void mul_genN${n}_sym${n}${n}_vout(int n, const double* restrict v
 EOC
 
   print OUT _multiplicationVersions($vout);
+}
+
+sub matrixMatrixMatrixSym
+{
+  my $n = shift;
+  die 'matrixMatrixMatrixSym ONLY defined for $n==3 right now' if $n != 3;
+
+
+  print OUT <<'EOC';
+// (%i2) sym3 : matrix([m0,m1,m2],
+//                      [m1,m3,m4],
+//                      [m2,m4,m5]);
+
+// (%o2) matrix([m0,m1,m2],[m1,m3,m4],[m2,m4,m5])
+// (%i3) sym3_a : matrix([a0,a1,a2],
+//                       [a1,a3,a4],
+//                       [a2,a4,a5]);
+
+// (%o3) matrix([a0,a1,a2],[a1,a3,a4],[a2,a4,a5])
+// (%i4) sym3_b : matrix([b0,b1,b2],
+//                       [b1,b3,b4],
+//                       [b2,b4,b5]);
+
+// (%o4) matrix([b0,b1,b2],[b1,b3,b4],[b2,b4,b5])
+// (%i5) sym3_a . sym3_b . sym3_a;
+
+// (%o5) matrix([a2*(a2*b5+a1*b4+a0*b2)+a1*(a2*b4+a1*b3+a0*b1) + a0*(a2*b2+a1*b1+a0*b0), a2*(a4*b5+a3*b4+a1*b2)+a1*(a4*b4+a3*b3+a1*b1) + a0*(a4*b2+a3*b1+a1*b0), a2*(a5*b5+a4*b4+a2*b2)+a1*(a5*b4+a4*b3+a2*b1) + a0*(a5*b2+a4*b1+a2*b0)],
+//              [a4*(a2*b5+a1*b4+a0*b2)+a3*(a2*b4+a1*b3+a0*b1) + a1*(a2*b2+a1*b1+a0*b0), a4*(a4*b5+a3*b4+a1*b2)+a3*(a4*b4+a3*b3+a1*b1) + a1*(a4*b2+a3*b1+a1*b0), a4*(a5*b5+a4*b4+a2*b2)+a3*(a5*b4+a4*b3+a2*b1) + a1*(a5*b2+a4*b1+a2*b0)],
+//              [a5*(a2*b5+a1*b4+a0*b2)+a4*(a2*b4+a1*b3+a0*b1) + a2*(a2*b2+a1*b1+a0*b0), a5*(a4*b5+a3*b4+a1*b2)+a4*(a4*b4+a3*b3+a1*b1) + a2*(a4*b2+a3*b1+a1*b0), a5*(a5*b5+a4*b4+a2*b2)+a4*(a5*b4+a4*b3+a2*b1) + a2*(a5*b2+a4*b1+a2*b0)])
+EOC
+
+  my $vout = <<'EOC';
+// symmetric A * B * A
+static inline void mul_sym33_sym33_sym33_vout(const double* restrict a, const double* restrict b, double* restrict vout)
+{
+  double t0 = a2*b5+a1*b4+a0*b2;
+  double t1 = a2*b4+a1*b3+a0*b1;
+  double t2 = a2*b2+a1*b1+a0*b0;
+  double t3 = a4*b2+a3*b1+a1*b0;
+  double t4 = a4*b5+a3*b4+a1*b2;
+  double t5 = a4*b4+a3*b3+a1*b1;
+
+  vout[0] = a2*t0+a1*t1+a0*t2;
+  vout[1] = a4*t0+a3*t1+a1*t2;
+  vout[2] = a5*t0+a4*t1+a2*t2;
+  vout[3] = a4*t4+a3*t5+a1*t3;
+  vout[4] = a5*t4+a4*t5+a2*t3;
+  vout[5] = a5*(a5*b5+a4*b4+a2*b2)+a4*(a5*b4+a4*b3+a2*b1) + a2*(a5*b2+a4*b1+a2*b0);
+}
+EOC
+
+  print OUT $vout;
 }
 
 sub matrixMatrixGen
