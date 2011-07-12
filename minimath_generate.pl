@@ -227,19 +227,19 @@ EOC
 // symmetric A * B * A
 static inline void mul_sym33_sym33_sym33_vout(const double* restrict a, const double* restrict b, double* restrict vout)
 {
-  double t0 = a2*b5+a1*b4+a0*b2;
-  double t1 = a2*b4+a1*b3+a0*b1;
-  double t2 = a2*b2+a1*b1+a0*b0;
-  double t3 = a4*b2+a3*b1+a1*b0;
-  double t4 = a4*b5+a3*b4+a1*b2;
-  double t5 = a4*b4+a3*b3+a1*b1;
+  double t0 = a[2]*b[5]+a[1]*b[4]+a[0]*b[2];
+  double t1 = a[2]*b[4]+a[1]*b[3]+a[0]*b[1];
+  double t2 = a[2]*b[2]+a[1]*b[1]+a[0]*b[0];
+  double t3 = a[4]*b[2]+a[3]*b[1]+a[1]*b[0];
+  double t4 = a[4]*b[5]+a[3]*b[4]+a[1]*b[2];
+  double t5 = a[4]*b[4]+a[3]*b[3]+a[1]*b[1];
 
-  vout[0] = a2*t0+a1*t1+a0*t2;
-  vout[1] = a4*t0+a3*t1+a1*t2;
-  vout[2] = a5*t0+a4*t1+a2*t2;
-  vout[3] = a4*t4+a3*t5+a1*t3;
-  vout[4] = a5*t4+a4*t5+a2*t3;
-  vout[5] = a5*(a5*b5+a4*b4+a2*b2)+a4*(a5*b4+a4*b3+a2*b1) + a2*(a5*b2+a4*b1+a2*b0);
+  vout[0] = a[2]*t0+a[1]*t1+a[0]*t2;
+  vout[1] = a[4]*t0+a[3]*t1+a[1]*t2;
+  vout[2] = a[5]*t0+a[4]*t1+a[2]*t2;
+  vout[3] = a[4]*t4+a[3]*t5+a[1]*t3;
+  vout[4] = a[5]*t4+a[4]*t5+a[2]*t3;
+  vout[5] = a[5]*(a[5]*b[5]+a[4]*b[4]+a[2]*b[2])+a[4]*(a[5]*b[4]+a[4]*b[3]+a[2]*b[1]) + a[2]*(a[5]*b[2]+a[4]*b[1]+a[2]*b[0]);
 }
 EOC
 
