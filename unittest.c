@@ -12,6 +12,10 @@
   }                                                             \
 } while(0)
 
+#define assert_vector_elemeq6(a,b) do {                         \
+  for(int i=0; i<6; i++) assert_eq(a,b);                        \
+} while(0)
+
 #define assert_vector_elemeq5(a,b) do {                         \
   for(int i=0; i<5; i++) assert_eq(a,b);                        \
 } while(0)
@@ -56,6 +60,14 @@ int main(void)
     memcpy(v5, a5, sizeof(a5));
     sub_vec_vaccum(5, a5, b5, v5);
     assert_vector_elemeq5(2.0*a5[i]-b5[i], v5[i]);
+
+    // now the scaled versions
+    add_vec_vout_scaled(5, a5, b5, v5, 3.0);
+    assert_vector_elemeq5(a5[i]+3.0*b5[i], v5[i]);
+
+    memcpy(v5, a5, sizeof(a5));
+    sub_vec_scaled(5, v5, b5, 3.0);
+    assert_vector_elemeq5(a5[i]-3.0*b5[i], v5[i]);
   }
 
   // now do various matrix things, so define some test matrices
@@ -88,6 +100,33 @@ int main(void)
   double a_x_m53 [] = {1.3829093,0.91127402,0.75990955};
   double a_x_m35t[] = {1.087156, 1.5092898,0.89821894};
   double v3[3];
+  double v6[6];
+
+  // for 3-way symmetric multiplication
+  // pdl> p $a
+  // [
+  //  [ 1.7154671,0.32440803, 1.5281059],
+  //  [0.32440803, 1.3319233, 1.4894104],
+  //  [ 1.5281059, 1.4894104, 1.8696738]
+  // ]
+  double s3_a[] = {1.7154671,0.32440803, 1.5281059, 1.3319233, 1.4894104, 1.8696738};
+
+  // pdl> p $b
+  // [
+  //  [ 1.3211548, 1.6953079,0.46298047],
+  //  [ 1.6953079, 1.4032645, 1.2392179],
+  //  [0.46298047, 1.2392179, 1.5834584]
+  // ]
+  double s3_b[] = {1.3211548, 1.6953079,0.46298047, 1.4032645, 1.2392179, 1.5834584};
+
+  // pdl> p $a x $b x $a
+  // [
+  //  [ 13.276035, 13.530868, 19.975459],
+  //  [ 13.530868, 12.970227, 19.287342],
+  //  [ 19.975459, 19.287342, 28.997443]
+  // ]
+  double s3_aba[] = {13.276035, 13.530868, 19.975459, 12.970227, 19.287342, 28.997443};
+
 
   // symmetric multiplication
   {
@@ -109,6 +148,10 @@ int main(void)
     memcpy(v5, a5, sizeof(a5));
     mul_vec5_sym55_vaccum_scaled(a5, s5, v5, -3.0);
     assert_vector_elemeq5(v5[i], -3.0*a_x_s[i] + a5[i]);
+
+    // 3-way symmetric multiplication
+    mul_sym33_sym33_sym33_vout(s3_a, s3_b, v6);
+    assert_vector_elemeq6(v6[i], s3_aba[i]);
   }
 
   // general multiplication
@@ -175,7 +218,6 @@ int main(void)
     {
       assert_eq(m[i], i%4 ? 0 : 1);
     }
-
 
   }
 
