@@ -415,6 +415,7 @@ static inline double cofactors_sym5(const double* restrict m, double* restrict c
   return m[0]*c[0] + m[1]*c[1] + m[2]*c[2] + m[3]*c[3] + m[4]*c[4];
 }
 
+# warning I should get rid of mul_sym33_sym33_scaled_out
 // symmetrix 3x3 by symmetrix 3x3, written into a new non-symmetric matrix, scaled
 static inline void mul_sym33_sym33_scaled_out(const double* restrict s0, const double* restrict s1, double* restrict mout, double scale)
 {
