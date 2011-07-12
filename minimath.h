@@ -444,3 +444,23 @@ static inline void mul_sym33_sym33_scaled_out(const double* restrict s0, const d
   mout[8] = scale * (s0[5]*s1[5]+s0[4]*s1[4]+s0[2]*s1[2]);
 }
 
+static inline void outerproduct3(const double* restrict v, double* restrict P)
+{
+  P[0] = v[0]*v[0];
+  P[1] = v[0]*v[1];
+  P[2] = v[0]*v[2];
+  P[3] = v[1]*v[1];
+  P[4] = v[1]*v[2];
+  P[5] = v[2]*v[2];
+}
+
+static inline void outerproduct3_scaled(const double* restrict v, double* restrict P, double scale)
+{
+  P[0] = scale * v[0]*v[0];
+  P[1] = scale * v[0]*v[1];
+  P[2] = scale * v[0]*v[2];
+  P[3] = scale * v[1]*v[1];
+  P[4] = scale * v[1]*v[2];
+  P[5] = scale * v[2]*v[2];
+}
+
