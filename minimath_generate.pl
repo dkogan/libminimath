@@ -80,9 +80,13 @@ static inline void sub_vec_vout(int n, const double* restrict a, const double* r
 EOC
 
   say OUT $vout;
+  say OUT _makeScaled_arithmetic($vout);
 
-  my $arg0 = _getFirstDataArg($vout);
-  say OUT _makeInplace_mulVector($vout, $arg0);
+  my $arg0     = _getFirstDataArg($vout);
+  my $vinplace = _makeInplace_mulVector($vout, $arg0);
+
+  say OUT $vinplace;
+  say OUT _makeScaled_arithmetic($vinplace);
   say OUT _makeVaccum ($vout);
 }
 
@@ -400,6 +404,22 @@ sub _makeVaccum
   $v =~ s/(vaccum\[.*?\]\s*)=/$1+=/gm;
 
   return $v;
+}
+
+sub _makeScaled_arithmetic
+{
+  my $f = shift;
+
+  # rename functions
+  $f =~ s/^(static inline .*)(\s*\()/${1}_scaled$2/gm;
+
+  # add the scale argument
+  $f =~ s/^(static inline .*)\)$/$1, double scale)/gm;
+
+  # apply the scaling
+  $f =~ s/([+-]) b/$1 scale*b/gm;
+
+  return $f;
 }
 
 sub _makeScaled_mulVector
