@@ -464,3 +464,23 @@ static inline void outerproduct3_scaled(const double* restrict v, double* restri
   P[5] = scale * v[2]*v[2];
 }
 
+// conjugate 2 vectors (a, b) through a symmetric matrix S: a->transpose x S x b
+// (%i2) sym3 : matrix([s0,s1,s2],
+//                     [s1,s3,s4],
+//                     [s2,s4,s5]);
+
+// (%o2) matrix([s0,s1,s2],[s1,s3,s4],[s2,s4,s5])
+// (%i6) a : matrix([a0],[a1],[a2]);
+
+// (%o6) matrix([a0],[a1],[a2])
+// (%i7) b : matrix([b0],[b1],[b2]);
+
+// (%o7) matrix([b0],[b1],[b2])
+// (%i10) transpose(a) . sym3 . b;
+
+// (%o10) a2*(b2*s5+b1*s4+b0*s2)+a1*(b2*s4+b1*s3+b0*s1)+a0*(b2*s2+b1*s1+b0*s0)
+static inline double conj_3(const double* restrict a, const double* restrict s, const double* restrict b)
+{
+  return a[2]*(b[2]*s[5]+b[1]*s[4]+b[0]*s[2])+a[1]*(b[2]*s[4]+b[1]*s[3]+b[0]*s[1])+a[0]*(b[2]*s[2]+b[1]*s[1]+b[0]*s[0]);
+}
+

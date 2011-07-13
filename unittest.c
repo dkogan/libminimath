@@ -127,6 +127,17 @@ int main(void)
   // ]
   double s3_aba[] = {13.276035, 13.530868, 19.975459, 12.970227, 19.287342, 28.997443};
 
+  // pdl> p $a3 = random(3)
+  // [0.93668206, 0.5618703,0.71166218]
+  // pdl> p $b3 = random(3)
+  // [0.86716519,0.22144078,0.83853122]
+  // pdl> p ($a3 x $a x $b3->transpose)
+  // [
+  //  [ 5.9799184]
+  // ]
+  double a3[]        = {0.93668206, 0.5618703,0.71166218};
+  double b3[]        = {0.86716519,0.22144078,0.83853122};
+  double conj_result = 5.9799184;
 
   // symmetric multiplication
   {
@@ -152,6 +163,10 @@ int main(void)
     // 3-way symmetric multiplication
     mul_sym33_sym33_sym33_vout(s3_a, s3_b, v6);
     assert_vector_elemeq6(v6[i], s3_aba[i]);
+
+    // conjugation
+    assert_eq( conj_3(a3, s3_a, b3),
+               conj_result );
   }
 
   // general multiplication
