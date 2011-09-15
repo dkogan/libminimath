@@ -8,7 +8,7 @@
   if( fabs((a) - (b)) > 1e-6 )                                  \
   {                                                             \
     printf("Test failed on line %d\n", __LINE__);               \
-    return 0;                                                   \
+    return 1;                                                   \
   }                                                             \
 } while(0)
 
