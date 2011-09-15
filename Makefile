@@ -22,7 +22,7 @@ check: unittest
 	./$<
 
 clean:
-	rm -rf unittest $(TARGET)
+	rm -rf unittest unittest.o $(TARGET)
 
 .PNONY: clean install check
 
