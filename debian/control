@@ -1,0 +1,20 @@
+Source: libminimath-dev
+Priority: extra
+Maintainer: Dima Kogan <dima@oblong.com>
+Build-Depends: debhelper (>= 7.0.0), perl, liblist-moreutils-perl
+Standards-Version: 3.9.2
+Section: libs
+Homepage: https://github.com/Oblong/libminimath
+Vcs-Git: git://github.com/Oblong/libminimath.git
+Vcs-Browser: https://github.com/Oblong/libminimath/commits/master
+
+Package: libminimath-dev
+Section: libdevel
+Architecture: any
+Depends:
+Description: libminimath: small linear algebra routines
+ Implements basic linear algebra for small matrices. This is designed to produce
+ very efficient code by allowing the compiler to apply heavy optimizations. This
+ library was written because BLAS and LAPACK implementations tend to be geared
+ for large matrices, and their overhead usually destroys the performance for
+ small matrices.
