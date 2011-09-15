@@ -1,15 +1,29 @@
-CFLAGS = -MMD -Wall -Wextra -std=gnu99 -ffast-math -O3 -mtune=core2
+TARGET = minimath_generated.h
 
-all: minimath_generated.h
+all: $(TARGET)
 
-minimath_generated.h: minimath_generate.pl
-	./minimath_generate.pl
+$(TARGET): minimath_generate.pl
+	./$<
 
 unittest: unittest.o
+unittest.o: $(TARGET)
+unittest.o: CFLAGS = -Wall -Wextra -std=gnu99 -ffast-math -O3
+
+ifdef DESTDIR
+install: $(TARGET)
+	mkdir -p $(DESTDIR)/usr/include/
+	install -m 0644 $(TARGET) $(DESTDIR)/usr/include/
+else
+install:
+	@echo "make install is here ONLY for the debian package. Do NOT run it yourself" && false
+endif
+
+check: unittest
+	./$<
 
 clean:
-	rm -rf *.o unittest
+	rm -rf unittest $(TARGET)
 
-.PNONY: clean
+.PNONY: clean install check
 
 -include *.d
