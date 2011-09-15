@@ -1,3 +1,9 @@
+libminimath-dev (0.01-2) unstable; urgency=low
+
+  * The package now contains the generated AND the pre-defined headers
+
+ -- Dima Kogan <dima@oblong.com>  Thu, 15 Sep 2011 15:34:41 -0700
+
 libminimath-dev (0.01-1) unstable; urgency=low
 
   * Initial release
