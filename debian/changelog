@@ -1,3 +1,9 @@
+libminimath-dev (0.01-3) unstable; urgency=low
+
+  * Package is now arch-independent
+
+ -- Dima Kogan <dima@oblong.com>  Thu, 10 May 2012 11:37:29 -0700
+
 libminimath-dev (0.01-2) unstable; urgency=low
 
   * The package now contains the generated AND the pre-defined headers
