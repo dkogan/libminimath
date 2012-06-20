@@ -1,4 +1,4 @@
-Source: libminimath-dev
+Source: libminimath
 Priority: extra
 Maintainer: Dima Kogan <dima@oblong.com>
 Build-Depends: debhelper (>= 7.0.0), perl, liblist-moreutils-perl
