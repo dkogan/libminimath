@@ -37,7 +37,7 @@ close OUT;
 
 sub dotProducts
 {
-  say OUT <<EOC;
+  print OUT <<EOC;
 static inline double dot_vec(int n, const double* restrict a, const double* restrict b)
 {
   double dot = 0.0;
@@ -50,7 +50,7 @@ EOC
 
 sub norms
 {
-  say OUT <<EOC;
+  print OUT <<EOC;
 static inline double norm2_vec(int n, const double* restrict a)
 {
   double dot = 0.0;
@@ -76,18 +76,17 @@ static inline void sub_vec_vout(int n, const double* restrict a, const double* r
   for(int i=0; i<n; i++)
     vout[i] = a[i] - b[i];
 }
-
 EOC
 
-  say OUT $vout;
-  say OUT _makeScaled_arithmetic($vout);
+  print OUT $vout;
+  print OUT _makeScaled_arithmetic($vout);
 
   my $arg0     = _getFirstDataArg($vout);
   my $vinplace = _makeInplace_mulVector($vout, $arg0);
 
-  say OUT $vinplace;
-  say OUT _makeScaled_arithmetic($vinplace);
-  say OUT _makeVaccum ($vout);
+  print OUT $vinplace;
+  print OUT _makeScaled_arithmetic($vinplace);
+  print OUT _makeVaccum ($vout);
 }
 
 sub matrixVectorSym
