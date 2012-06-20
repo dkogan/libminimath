@@ -26,5 +26,3 @@ clean:
 	rm -rf unittest unittest.o $(TARGET)
 
 .PNONY: clean install check
-
--include *.d
