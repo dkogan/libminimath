@@ -1,3 +1,10 @@
+libminimath (0.01-4) unstable; urgency=low
+
+  * added README
+  * added explicit LICENSE file
+
+ -- Dima Kogan <dima@oblong.com>  Wed, 20 Jun 2012 18:50:24 -0700
+
 libminimath-dev (0.01-3) unstable; urgency=low
 
   * Package is now arch-independent
