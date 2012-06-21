@@ -21,7 +21,12 @@ vectorArithmetic();
 foreach my $n(@sizes)
 {
   matrixVectorSym($n);
-  foreach my $m (@sizes){ matrixVectorGen($n, $m) }
+
+  foreach my $m (@sizes)
+  {
+    matrixVectorGen($n, $m)
+  }
+
   matrixMatrixSym($n);
   matrixMatrixGen($n);
 }
