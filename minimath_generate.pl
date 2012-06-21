@@ -187,7 +187,7 @@ sub matrixMatrixSym
   # compute v*A where v is the row vector and A is the NxM matrix
 
   my $vout = <<EOC;
-// general Nx$n matrix by symmetric ${n}x$n, written into a new Nx$n
+// general Nx$n matrix by symmetric ${n}x$n
 static inline void mul_genN${n}_sym${n}${n}_vout(int n, const double* restrict v, const double* restrict s, double* restrict vout)
 {
   for(int i=0; i<n; i++)
@@ -260,14 +260,14 @@ sub matrixMatrixGen
   # compute v*A where v is the row vector and A is the NxM matrix
 
   my $vout = <<EOC;
-// general Nx${n} matrix by general ${n}x${n}, written back into the Nx${n}
+// general Nx${n} matrix by general ${n}x${n}
 static inline void mul_genN${n}_gen${n}${n}_vout(int n, double* restrict v, const double* restrict m, double* restrict vout)
 {
   for(int i=0; i<n; i++)
     mul_vec${n}_gen${n}${n}_vout(v + $n*i, m, vout + $n*i);
 }
 
-// general Nx${n} matrix by general ${n}x${n}, written back into the Nx${n}
+// general Nx${n} matrix by general ${n}x${n}
 static inline void mul_genN${n}_gen${n}${n}t_vout(int n, double* restrict v, const double* restrict mt, double* restrict vout)
 {
   for(int i=0; i<n; i++)
