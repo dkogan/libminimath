@@ -69,13 +69,13 @@ EOC
 sub vectorArithmetic
 {
   my $vout = <<EOC;
-// a + b
+// a + b -> vout
 static inline void add_vec_vout(int n, const double* restrict a, const double* restrict b, double* restrict vout)
 {
   for(int i=0; i<n; i++)
     vout[i] = a[i] + b[i];
 }
-// a - b
+// a - b -> vout
 static inline void sub_vec_vout(int n, const double* restrict a, const double* restrict b, double* restrict vout)
 {
   for(int i=0; i<n; i++)
@@ -117,7 +117,7 @@ EOC
     $vout .= "  vout[$i] = " . join(' + ', @sum_components) . ";\n";
   }
 
-  $vout .= "}\n";
+  $vout .= "}";
 
 
   print OUT _multiplicationVersions($vout, $n, $n);
@@ -151,7 +151,7 @@ EOC
     $vout .= "  vout[$i] = " . join(' + ', @sum_components) . ";\n";
   }
 
-  $vout .= "}\n";
+  $vout .= "}";
   print OUT _multiplicationVersions($vout, $m, $n);
 
 
@@ -173,7 +173,7 @@ EOC
     $vout .= "  vout[$i] = " . join(' + ', @sum_components) . ";\n";
   }
 
-  $vout .= "}\n";
+  $vout .= "}";
   print OUT _multiplicationVersions($vout, $m,$n);
 }
 
@@ -406,6 +406,9 @@ sub _makeVaccum
 
   # make sure we accumulate
   $v =~ s/(vaccum\[.*?\]\s*)=/$1+=/gm;
+
+  # better comment
+  $v =~ s/-> vaccum/-> + vaccum/gm;
 
   return $v;
 }
