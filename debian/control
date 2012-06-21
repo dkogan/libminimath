@@ -11,7 +11,7 @@ Vcs-Browser: https://github.com/Oblong/libminimath/commits/master
 Package: libminimath-dev
 Section: libdevel
 Architecture: all
-Depends:
+Depends: ${misc:Depends}
 Description: libminimath: small linear algebra routines
  Implements basic linear algebra for small matrices. This is designed to produce
  very efficient code by allowing the compiler to apply heavy optimizations. This
