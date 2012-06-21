@@ -8,7 +8,8 @@ $(TARGET): minimath_generate.pl
 
 unittest: unittest.o
 unittest.o: $(HEADER)
-unittest.o: CFLAGS = -Wall -Wextra -std=gnu99 -ffast-math -O3
+CFLAGS = -Wall -Wextra -std=gnu99 -ffast-math -O3 -I.
+
 
 ifdef DESTDIR
 install: $(TARGET)
