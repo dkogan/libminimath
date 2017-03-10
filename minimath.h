@@ -415,6 +415,205 @@ static inline double cofactors_sym5(const double* restrict m, double* restrict c
   return m[0]*c[0] + m[1]*c[1] + m[2]*c[2] + m[3]*c[3] + m[4]*c[4];
 }
 
+/*
+The upper-triangular and lower-triangular routines have a similar API to the
+symmetric ones. Note that as with symmetric matrices, we don't store redundant
+data, and we store data row-first. So the upper-triangular matrices have N
+elements in the first row in memory, but lower-triangular matrices have only 1.
+
+Inverses of triangular matrices are similarly triangular, and that's how I store
+them
+
+
+Session:
+
+// upper triangular
+(%i2) ut2 : matrix([m0,m1],[0,m2]);
+
+(%o2) matrix([m0,m1],[0,m2])
+(%i3) ut3 : matrix([m0,m1,m2],[0,m3,m4],[0,0,m5]);
+
+(%o3) matrix([m0,m1,m2],[0,m3,m4],[0,0,m5])
+(%i4) ut4 : matrix([m0,m1,m2,m3],[0,m4,m5,m6],[0,0,m7,m8],[0,0,0,m9]);
+
+(%o4) matrix([m0,m1,m2,m3],[0,m4,m5,m6],[0,0,m7,m8],[0,0,0,m9])
+(%i5) ut5 : matrix([m0,m1,m2,m3,m4],[0,m5,m6,m7,m8],[0,0,m9,m10,m11],[0,0,0,m12,m13],[0,0,0,0,m14]);
+
+(%o5) matrix([m0,m1,m2,m3,m4],[0,m5,m6,m7,m8],[0,0,m9,m10,m11],
+             [0,0,0,m12,m13],[0,0,0,0,m14])
+
+(%i11) num( ev(invert(ut2),detout) );
+
+(%o11) matrix([m2,-m1],[0,m0])
+(%i12) num( ev(invert(ut3),detout) );
+
+(%o12) matrix([m3*m5,-m1*m5,m1*m4-m2*m3],[0,m0*m5,-m0*m4],[0,0,m0*m3])
+(%i13) num( ev(invert(ut4),detout) );
+
+(%o13) matrix([m4*m7*m9,-m1*m7*m9,m1*m5*m9-m2*m4*m9,
+               (-m1*(m5*m8-m6*m7))+m2*m4*m8-m3*m4*m7],
+              [0,m0*m7*m9,-m0*m5*m9,m0*(m5*m8-m6*m7)],
+              [0,0,m0*m4*m9,-m0*m4*m8],[0,0,0,m0*m4*m7])
+(%i14) num( ev(invert(ut5),detout) );
+
+(%o14) matrix([m12*m14*m5*m9,-m1*m12*m14*m9,m1*m12*m14*m6-m12*m14*m2*m5,
+               (-m1*(m10*m14*m6-m14*m7*m9))-m14*m3*m5*m9+m10*m14*m2*m5,
+               m1*(m12*m8*m9-m13*m7*m9+(m10*m13-m11*m12)*m6)
+                -m12*m4*m5*m9+m13*m3*m5*m9-(m10*m13-m11*m12)*m2*m5],
+              [0,m0*m12*m14*m9,-m0*m12*m14*m6,m0*(m10*m14*m6-m14*m7*m9),
+               -m0*(m12*m8*m9-m13*m7*m9+(m10*m13-m11*m12)*m6)],
+              [0,0,m0*m12*m14*m5,-m0*m10*m14*m5,m0*(m10*m13-m11*m12)*m5],
+              [0,0,0,m0*m14*m5*m9,-m0*m13*m5*m9],[0,0,0,0,m0*m12*m5*m9])
+
+
+// lower-triangular
+(%i19) lt2 : matrix([m0,0],[m1,m2]);
+
+(%o19) matrix([m0,0],[m1,m2])
+(%i20) lt3 : matrix([m0,0,0],[m1,m2,0],[m3,m4,m5]);
+
+(%o20) matrix([m0,0,0],[m1,m2,0],[m3,m4,m5])
+(%i21) lt4 : matrix([m0,0,0,0],[m1,m2,0,0],[m3,m4,m5,0],[m6,m7,m8,m9]);
+
+(%o21) matrix([m0,0,0,0],[m1,m2,0,0],[m3,m4,m5,0],[m6,m7,m8,m9])
+(%i22) lt5 : matrix([m0,0,0,0,0],[m1,m2,0,0,0],[m3,m4,m5,0,0],[m6,m7,m8,m9,0],[m10,m11,m12,m13,m14]);
+
+(%o22) matrix([m0,0,0,0,0],[m1,m2,0,0,0],[m3,m4,m5,0,0],[m6,m7,m8,m9,0],
+              [m10,m11,m12,m13,m14])
+(%i23) num( ev(invert(lt2),detout) );
+
+(%o23) matrix([m2,0],[-m1,m0])
+(%i24) num( ev(invert(lt3),detout) );
+
+(%o24) matrix([m2*m5,0,0],[-m1*m5,m0*m5,0],[m1*m4-m2*m3,-m0*m4,m0*m2])
+(%i25) num( ev(invert(lt4),detout) );
+
+(%o25) matrix([m2*m5*m9,0,0,0],[-m1*m5*m9,m0*m5*m9,0,0],
+              [m1*m4*m9-m2*m3*m9,-m0*m4*m9,m0*m2*m9,0],
+              [m2*(m3*m8-m5*m6)-m1*(m4*m8-m5*m7),m0*(m4*m8-m5*m7),-m0*m2*m8,
+               m0*m2*m5])
+(%i26) num( ev(invert(lt5),detout) );
+
+(%o26) matrix([m14*m2*m5*m9,0,0,0,0],[-m1*m14*m5*m9,m0*m14*m5*m9,0,0,0],
+              [m1*m14*m4*m9-m14*m2*m3*m9,-m0*m14*m4*m9,m0*m14*m2*m9,0,0],
+              [m2*(m14*m3*m8-m14*m5*m6)-m1*(m14*m4*m8-m14*m5*m7),
+               m0*(m14*m4*m8-m14*m5*m7),-m0*m14*m2*m8,m0*m14*m2*m5,0],
+              [m1*(m4*(m13*m8-m12*m9)-m5*(m13*m7-m11*m9))
+                -m2*(m3*(m13*m8-m12*m9)-m5*(m13*m6-m10*m9)),
+               -m0*(m4*(m13*m8-m12*m9)-m5*(m13*m7-m11*m9)),
+               m0*m2*(m13*m8-m12*m9),-m0*m13*m2*m5,m0*m2*m5*m9])
+
+ */
+static inline double cofactors_ut2(const double* restrict m, double* restrict c)
+{
+    int i=0;
+    c[i++] = m[2];
+    c[i++] = -m[1];
+    c[i++] = m[0];
+    return m[0]*m[2];
+}
+static inline double cofactors_ut3(const double* restrict m, double* restrict c)
+{
+    int i=0;
+    c[i++] = m[3]*m[5];
+    c[i++] = -m[1]*m[5];
+    c[i++] = m[1]*m[4]-m[2]*m[3];
+    c[i++] = m[0]*m[5];
+    c[i++] = -m[0]*m[4];
+    c[i++] = m[0]*m[3];
+    return m[0]*m[3]*m[5];
+}
+static inline double cofactors_ut4(const double* restrict m, double* restrict c)
+{
+    int i=0;
+    c[i++] = m[4]*m[7]*m[9];
+    c[i++] = -m[1]*m[7]*m[9];
+    c[i++] = m[1]*m[5]*m[9]-m[2]*m[4]*m[9];
+    c[i++] = (-m[1]*(m[5]*m[8]-m[6]*m[7]))+m[2]*m[4]*m[8]-m[3]*m[4]*m[7];
+    c[i++] = m[0]*m[7]*m[9];
+    c[i++] = -m[0]*m[5]*m[9];
+    c[i++] = m[0]*(m[5]*m[8]-m[6]*m[7]);
+    c[i++] = m[0]*m[4]*m[9];
+    c[i++] = -m[0]*m[4]*m[8];
+    c[i++] = m[0]*m[4]*m[7];
+    return m[0]*m[4]*m[7]*m[9];
+}
+static inline double cofactors_ut5(const double* restrict m, double* restrict c)
+{
+    int i=0;
+    c[i++] = m[12]*m[14]*m[5]*m[9];
+    c[i++] = -m[1]*m[12]*m[14]*m[9];
+    c[i++] = m[1]*m[12]*m[14]*m[6]-m[12]*m[14]*m[2]*m[5];
+    c[i++] = (-m[1]*(m[10]*m[14]*m[6]-m[14]*m[7]*m[9]))-m[14]*m[3]*m[5]*m[9]+m[10]*m[14]*m[2]*m[5];
+    c[i++] = m[1]*(m[12]*m[8]*m[9]-m[13]*m[7]*m[9]+(m[10]*m[13]-m[11]*m[12])*m[6])-m[12]*m[4]*m[5]*m[9]+m[13]*m[3]*m[5]*m[9]-(m[10]*m[13]-m[11]*m[12])*m[2]*m[5];
+    c[i++] = m[0]*m[12]*m[14]*m[9];
+    c[i++] = -m[0]*m[12]*m[14]*m[6];
+    c[i++] = m[0]*(m[10]*m[14]*m[6]-m[14]*m[7]*m[9]);
+    c[i++] = -m[0]*(m[12]*m[8]*m[9]-m[13]*m[7]*m[9]+(m[10]*m[13]-m[11]*m[12])*m[6]);
+    c[i++] = m[0]*m[12]*m[14]*m[5];
+    c[i++] = -m[0]*m[10]*m[14]*m[5];
+    c[i++] = m[0]*(m[10]*m[13]-m[11]*m[12])*m[5];
+    c[i++] = m[0]*m[14]*m[5]*m[9];
+    c[i++] = -m[0]*m[13]*m[5]*m[9];
+    c[i++] = m[0]*m[12]*m[5]*m[9];
+    return m[0]*m[5]*m[9]*m[12]*m[14];
+}
+static inline double cofactors_lt2(const double* restrict m, double* restrict c)
+{
+    int i=0;
+    c[i++] = m[2];
+    c[i++] = -m[1];
+    c[i++] = m[0];
+    return m[0]*m[2];
+}
+static inline double cofactors_lt3(const double* restrict m, double* restrict c)
+{
+    int i=0;
+    c[i++] = m[2]*m[5];
+    c[i++] = -m[1]*m[5];
+    c[i++] = m[0]*m[5];
+    c[i++] = m[1]*m[4]-m[2]*m[3];
+    c[i++] = -m[0]*m[4];
+    c[i++] = m[0]*m[2];
+    return m[0]*m[2]*m[5];
+}
+static inline double cofactors_lt4(const double* restrict m, double* restrict c)
+{
+    int i=0;
+    c[i++] = m[2]*m[5]*m[9];
+    c[i++] = -m[1]*m[5]*m[9];
+    c[i++] = m[0]*m[5]*m[9];
+    c[i++] = m[1]*m[4]*m[9]-m[2]*m[3]*m[9];
+    c[i++] = -m[0]*m[4]*m[9];
+    c[i++] = m[0]*m[2]*m[9];
+    c[i++] = m[2]*(m[3]*m[8]-m[5]*m[6])-m[1]*(m[4]*m[8]-m[5]*m[7]);
+    c[i++] = m[0]*(m[4]*m[8]-m[5]*m[7]);
+    c[i++] = -m[0]*m[2]*m[8];
+    c[i++] = m[0]*m[2]*m[5];
+    return m[0]*m[2]*m[5]*m[9];
+}
+static inline double cofactors_lt5(const double* restrict m, double* restrict c)
+{
+    int i=0;
+    c[i++] = m[14]*m[2]*m[5]*m[9];
+    c[i++] = -m[1]*m[14]*m[5]*m[9];
+    c[i++] = m[0]*m[14]*m[5]*m[9];
+    c[i++] = m[1]*m[14]*m[4]*m[9]-m[14]*m[2]*m[3]*m[9];
+    c[i++] = -m[0]*m[14]*m[4]*m[9];
+    c[i++] = m[0]*m[14]*m[2]*m[9];
+    c[i++] = m[2]*(m[14]*m[3]*m[8]-m[14]*m[5]*m[6])-m[1]*(m[14]*m[4]*m[8]-m[14]*m[5]*m[7]);
+    c[i++] = m[0]*(m[14]*m[4]*m[8]-m[14]*m[5]*m[7]);
+    c[i++] = -m[0]*m[14]*m[2]*m[8];
+    c[i++] = m[0]*m[14]*m[2]*m[5];
+    c[i++] = m[1]*(m[4]*(m[13]*m[8]-m[12]*m[9])-m[5]*(m[13]*m[7]-m[11]*m[9]))-m[2]*(m[3]*(m[13]*m[8]-m[12]*m[9])-m[5]*(m[13]*m[6]-m[10]*m[9]));
+    c[i++] = -m[0]*(m[4]*(m[13]*m[8]-m[12]*m[9])-m[5]*(m[13]*m[7]-m[11]*m[9]));
+    c[i++] = m[0]*m[2]*(m[13]*m[8]-m[12]*m[9]);
+    c[i++] = -m[0]*m[13]*m[2]*m[5];
+    c[i++] = m[0]*m[2]*m[5]*m[9];
+    return m[0]*m[2]*m[5]*m[9]*m[14];
+}
+
+
 # warning I should get rid of mul_sym33_sym33_scaled_out
 // symmetrix 3x3 by symmetrix 3x3, written into a new non-symmetric matrix, scaled
 static inline void mul_sym33_sym33_scaled_out(const double* restrict s0, const double* restrict s1, double* restrict mout, double scale)
