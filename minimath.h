@@ -614,7 +614,7 @@ static inline double cofactors_lt5(const double* restrict m, double* restrict c)
 }
 
 
-# warning I should get rid of mul_sym33_sym33_scaled_out
+//# warning I should get rid of mul_sym33_sym33_scaled_out
 // symmetrix 3x3 by symmetrix 3x3, written into a new non-symmetric matrix, scaled
 static inline void mul_sym33_sym33_scaled_out(const double* restrict s0, const double* restrict s1, double* restrict mout, double scale)
 {
