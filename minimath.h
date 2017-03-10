@@ -683,3 +683,49 @@ static inline double conj_3(const double* restrict a, const double* restrict s, 
   return a[2]*(b[2]*s[5]+b[1]*s[4]+b[0]*s[2])+a[1]*(b[2]*s[4]+b[1]*s[3]+b[0]*s[1])+a[0]*(b[2]*s[2]+b[1]*s[1]+b[0]*s[0]);
 }
 
+// Given an orthonormal matrix, returns the det. This is always +1 or -1
+static inline double det_orthonormal33(const double* m)
+{
+    // cross(row0,row1) = det * row3
+
+    // I find a nice non-zero element of row3, and see if the signs match
+    if( m[6] < -0.1 )
+    {
+        // looking at col0 of the last row. It is <0
+        double cross = m[1]*m[5] - m[2]*m[4];
+        return cross > 0.0 ? -1.0 : 1.0;
+    }
+    if( m[6] > 0.1)
+    {
+        // looking at col0 of the last row. It is > 0
+        double cross = m[1]*m[5] - m[2]*m[4];
+        return cross > 0.0 ? 1.0 : -1.0;
+    }
+
+    if( m[7] < -0.1 )
+    {
+        // looking at col1 of the last row. It is <0
+        double cross = m[2]*m[3] - m[0]*m[5];
+        return cross > 0.0 ? -1.0 : 1.0;
+    }
+    if( m[7] > 0.1)
+    {
+        // looking at col1 of the last row. It is > 0
+        double cross = m[2]*m[3] - m[0]*m[5];
+        return cross > 0.0 ? 1.0 : -1.0;
+    }
+
+    if( m[8] < -0.1 )
+    {
+        // looking at col2 of the last row. It is <0
+        double cross = m[0]*m[4] - m[1]*m[3];
+        return cross > 0.0 ? -1.0 : 1.0;
+    }
+
+    // last option. This MUST be true, so I don't even bother to check
+    {
+        // looking at col2 of the last row. It is > 0
+        double cross = m[0]*m[4] - m[1]*m[3];
+        return cross > 0.0 ? 1.0 : -1.0;
+    }
+}

@@ -399,6 +399,35 @@ In [20]: n = 5; m = np.tril(np.random.rand(n,n)); print m; print np.linalg.inv(m
           }
       }
   }
+
+  // det of orthornormal matrices
+  {
+      {
+          double m[] = {1,0,0,  0,1,0,  0,0,1};
+          assert_eq(det_orthonormal33(m), 1.0);
+      }
+      {
+          double m[] = {1,0,0,  0,0,1,  0,1,0};
+          assert_eq(det_orthonormal33(m), -1.0);
+      }
+      {
+          double m[] = {-1,0,0,  0,1,0,  0,0,1};
+          assert_eq(det_orthonormal33(m), -1.0);
+      }
+      {
+          double m[] = {-1,0,0,  0,0,1,  0,1,0};
+          assert_eq(det_orthonormal33(m), 1.0);
+      }
+      {
+          double m[] = {0,0,1,  1,0,0,  0,1,0};
+          assert_eq(det_orthonormal33(m), 1.0);
+      }
+      {
+          double m[] = {0,1,0,  1,0,0,  0,0,1};
+          assert_eq(det_orthonormal33(m), -1.0);
+      }
+  }
+
   printf("all tests pass!\n");
 
   return 0;
