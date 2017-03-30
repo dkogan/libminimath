@@ -729,3 +729,24 @@ static inline double det_orthonormal33(const double* m)
         return cross > 0.0 ? 1.0 : -1.0;
     }
 }
+
+static inline void gen33_transpose(double* m)
+{
+    void xchg(int i, int j)
+    {
+        double t = m[i];
+        m[i] = m[j];
+        m[j] = t;
+    }
+
+    xchg(1, 3);
+    xchg(2, 6);
+    xchg(5, 7);
+}
+
+static inline void gen33_transpose_vout(const double* m, double* mout)
+{
+    for(int i=0; i<3; i++)
+        for(int j=0; j<3; j++)
+            mout[i*3+j] = m[j*3+i];
+}
