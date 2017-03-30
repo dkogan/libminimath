@@ -10,6 +10,7 @@ URL:            https://github.jpl.nasa.gov/maritime-robotics/libminimath/
 Source0:        https://github.jpl.nasa.gov/maritime-robotics/libminimath/archive/%{version}.tar.gz#/%{name}-%{version}.tar.gz
 
 BuildRequires:  mrbuild >= 0.40
+BuildRequires:  perl-List-MoreUtils
 
 %description
 This exists because for tiny matrices the overheads of BLAS and LAPACK are
