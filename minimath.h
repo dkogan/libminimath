@@ -750,3 +750,42 @@ static inline void gen33_transpose_vout(const double* m, double* mout)
         for(int j=0; j<3; j++)
             mout[i*3+j] = m[j*3+i];
 }
+
+static inline double cofactors_gen33(// output
+                                     double* restrict c,
+
+                                     // input
+                                     const double* restrict m)
+{
+    /*
+(%i1) display2d : false;
+
+(%o1) false
+(%i5) linel : 100000;
+
+(%o5) 100000
+(%i6) mat33 : matrix( [m0,m1,m2], [m3,m4,m5], [m6,m7,m8] );
+
+(%o6) matrix([m0,m1,m2],[m3,m4,m5],[m6,m7,m8])
+(%i7) num( ev(invert(mat33)), detout );
+
+(%o7) matrix([(m4*m8-m5*m7)/(m0*(m4*m8-m5*m7)+m1*(m5*m6-m3*m8)+m2*(m3*m7-m4*m6)),(m2*m7-m1*m8)/(m0*(m4*m8-m5*m7)+m1*(m5*m6-m3*m8)+m2*(m3*m7-m4*m6)),(m1*m5-m2*m4)/(m0*(m4*m8-m5*m7)+m1*(m5*m6-m3*m8)+m2*(m3*m7-m4*m6))],[(m5*m6-m3*m8)/(m0*(m4*m8-m5*m7)+m1*(m5*m6-m3*m8)+m2*(m3*m7-m4*m6)),(m0*m8-m2*m6)/(m0*(m4*m8-m5*m7)+m1*(m5*m6-m3*m8)+m2*(m3*m7-m4*m6)),(m2*m3-m0*m5)/(m0*(m4*m8-m5*m7)+m1*(m5*m6-m3*m8)+m2*(m3*m7-m4*m6))],[(m3*m7-m4*m6)/(m0*(m4*m8-m5*m7)+m1*(m5*m6-m3*m8)+m2*(m3*m7-m4*m6)),(m1*m6-m0*m7)/(m0*(m4*m8-m5*m7)+m1*(m5*m6-m3*m8)+m2*(m3*m7-m4*m6)),(m0*m4-m1*m3)/(m0*(m4*m8-m5*m7)+m1*(m5*m6-m3*m8)+m2*(m3*m7-m4*m6))])
+(%i8) determinant(mat33);
+
+(%o8) m0*(m4*m8-m5*m7)-m1*(m3*m8-m5*m6)+m2*(m3*m7-m4*m6)
+    */
+
+    double det = m[0]*(m[4]*m[8]-m[5]*m[7])-m[1]*(m[3]*m[8]-m[5]*m[6])+m[2]*(m[3]*m[7]-m[4]*m[6]);
+
+    c[0] = m[4]*m[8]-m[5]*m[7];
+    c[1] = m[2]*m[7]-m[1]*m[8];
+    c[2] = m[1]*m[5]-m[2]*m[4];
+    c[3] = m[5]*m[6]-m[3]*m[8];
+    c[4] = m[0]*m[8]-m[2]*m[6];
+    c[5] = m[2]*m[3]-m[0]*m[5];
+    c[6] = m[3]*m[7]-m[4]*m[6];
+    c[7] = m[1]*m[6]-m[0]*m[7];
+    c[8] = m[0]*m[4]-m[1]*m[3];
+
+    return det;
+}
