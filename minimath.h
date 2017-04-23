@@ -613,6 +613,27 @@ static inline double cofactors_lt5(const double* restrict m, double* restrict c)
     return m[0]*m[2]*m[5]*m[9]*m[14];
 }
 
+/*
+(%i27) a : matrix([a0,a1,a2],[0,a3,a4],[0,0,a5]);
+
+(%o27) matrix([a0,a1,a2],[0,a3,a4],[0,0,a5])
+(%i28) b : matrix([b0,b1,b2],[0,b3,b4],[0,0,b5]);
+
+(%o28) matrix([b0,b1,b2],[0,b3,b4],[0,0,b5])
+(%i29) a . b;
+
+(%o29) matrix([a0*b0,a1*b3+a0*b1,a2*b5+a1*b4+a0*b2],[0,a3*b3,a4*b5+a3*b4],[0,0,a5*b5])
+*/
+static inline void mul_ut3_ut3(const double* restrict a, const double* restrict b,
+                               double* restrict ab)
+{
+    ab[0] = a[0] * b[0];
+    ab[1] = a[1] * b[3]+a[0] * b[1];
+    ab[2] = a[2] * b[5]+a[1] * b[4]+a[0] * b[2];
+    ab[3] = a[3] * b[3];
+    ab[4] = a[4] * b[5]+a[3] * b[4];
+    ab[5] = a[5] * b[5];
+}
 
 # warning I should get rid of mul_sym33_sym33_scaled_out
 // symmetrix 3x3 by symmetrix 3x3, written into a new non-symmetric matrix, scaled
