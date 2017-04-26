@@ -1,5 +1,10 @@
 #pragma once
 
+#ifdef __cplusplus
+#define restrict
+#endif
+
+
 #include "minimath_generated.h"
 
 // In all the following computations I use the expression obtained before a
@@ -751,18 +756,17 @@ static inline double det_orthonormal33(const double* m)
     }
 }
 
+static void minimath_xchg(double* m, int i, int j)
+{
+    double t = m[i];
+    m[i] = m[j];
+    m[j] = t;
+}
 static inline void gen33_transpose(double* m)
 {
-    void xchg(int i, int j)
-    {
-        double t = m[i];
-        m[i] = m[j];
-        m[j] = t;
-    }
-
-    xchg(1, 3);
-    xchg(2, 6);
-    xchg(5, 7);
+    minimath_xchg(m, 1, 3);
+    minimath_xchg(m, 2, 6);
+    minimath_xchg(m, 5, 7);
 }
 
 static inline void gen33_transpose_vout(const double* m, double* mout)
@@ -810,3 +814,7 @@ static inline double cofactors_gen33(// output
 
     return det;
 }
+
+#ifdef __cplusplus
+#undef restrict
+#endif
