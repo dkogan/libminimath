@@ -1,3 +1,9 @@
+libminimath (0.06-1) unstable; urgency=medium
+
+  * Upstream update
+
+ -- Dima Kogan <dkogan@debian.org>  Thu, 28 Dec 2017 18:46:48 -0800
+
 libminimath (0.01-4) unstable; urgency=low
 
   * added README
