@@ -640,8 +640,8 @@ static inline void mul_ut3_ut3(const double* restrict a, const double* restrict 
     ab[5] = a[5] * b[5];
 }
 
-# warning I should get rid of mul_sym33_sym33_scaled_out
-// symmetrix 3x3 by symmetrix 3x3, written into a new non-symmetric matrix, scaled
+// symmetrix 3x3 by symmetrix 3x3, written into a new non-symmetric matrix,
+// scaled. This is a special-case function that I needed for something...
 static inline void mul_sym33_sym33_scaled_out(const double* restrict s0, const double* restrict s1, double* restrict mout, double scale)
 {
 // (%i106) matrix([m0_0,m0_1,m0_2],
