@@ -371,7 +371,7 @@ sub _makeInplace_mulVector
 
     # define the temporaries. I need one fewer than n
     my $tempDef = "  double t[$nt] = {" . join(', ', map {"${arg0}[$_]"} 0..$nt-1) . "};";
-    $v =~ s/^{$/{\n$tempDef/mg;
+    $v =~ s/^\{$/{\n$tempDef/mg;
   }
 
   return $v;
