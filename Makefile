@@ -4,7 +4,7 @@ HEADERS = $(TARGET) minimath.h
 all: $(TARGET)
 
 $(TARGET): minimath_generate.pl
-	./$<
+	./$< > $@.tmp && mv $@.tmp $@
 
 unittest: unittest.o
 unittest.o: $(HEADER)
