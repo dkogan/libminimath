@@ -1,5 +1,5 @@
 TARGET = minimath_generated.h
-HEADERS = $(TARGET) minimath.h
+HEADERS = $(TARGET) minimath.h minimath-extra.h
 
 all: $(TARGET)
 
