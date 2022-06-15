@@ -1879,22 +1879,47 @@ Test program:
     return m[0]*c[0]+m[1]*c[1]+m[2]*c[2]+m[3]*c[3]+m[4]*c[4]+m[5]*c[5];
 }
 
+#define _MUL_CORE(OPERATION)                                            \
+    for(int iout=0; iout<N; iout++)                                     \
+        for(int jout=0; jout<L; jout++)                                 \
+            for(int k=0; k<M; k++)                                      \
+                P[iout*P_strideelems0 + jout*P_strideelems1] OPERATION  \
+                    A[iout*A_strideelems0 + k   *A_strideelems1] *      \
+                    B[k   *B_strideelems0 + jout*B_strideelems1] *      \
+                    scale
+
+// Matrix multiplication. Dimensions (N,L) <- (N,M) * (M,L)
 static
-void mul_gen23_gen33_accum(// output
+void mul_genNM_genML(// output
+                     double* restrict P, int P_strideelems0, int P_strideelems1,
+                     // input
+                     int N, int M, int L,
+                     const double* A, int A_strideelems0, int A_strideelems1,
+                     const double* B, int B_strideelems0, int B_strideelems1,
+                     const double scale)
+{
+    _MUL_CORE(=);
+}
+static
+void mul_genNM_genML_accum(// output
                            double* restrict P, int P_strideelems0, int P_strideelems1,
                            // input
+                           int N, int M, int L,
                            const double* A, int A_strideelems0, int A_strideelems1,
                            const double* B, int B_strideelems0, int B_strideelems1,
                            const double scale)
 {
-    for(int iout=0; iout<2; iout++)
-        for(int jout=0; jout<3; jout++)
-            for(int k=0; k<3; k++)
-                P[iout*P_strideelems0 + jout*P_strideelems1] +=
-                    A[iout*A_strideelems0 + k   *A_strideelems1] *
-                    B[k   *B_strideelems0 + jout*B_strideelems1] *
-                    scale;
+    _MUL_CORE(+=);
 }
+#undef _MUL_CORE
+
+// Some common cases into convenient macros
+#define mul_gen33_gen33(P,A,B)        mul_genNM_genML(      P,3,1, 3,3,3, A,3,1, B,3,1, 1.0)
+#define mul_gen33_gen33_accum(P,A,B)  mul_genNM_genML_accum(P,3,1, 3,3,3, A,3,1, B,3,1, 1.0)
+#define mul_gen33t_gen33(P,A,B)       mul_genNM_genML(      P,3,1, 3,3,3, A,1,3, B,3,1, 1.0)
+#define mul_gen33t_gen33_accum(P,A,B) mul_genNM_genML_accum(P,3,1, 3,3,3, A,1,3, B,3,1, 1.0)
+#define mul_gen33_gen33t(P,A,B)       mul_genNM_genML(      P,3,1, 3,3,3, A,3,1, B,1,3, 1.0)
+#define mul_gen33_gen33t_accum(P,A,B) mul_genNM_genML_accum(P,3,1, 3,3,3, A,3,1, B,1,3, 1.0)
 
 static inline void mul_vec6_sym66_scaled_strided(double* restrict v, int v_strideelems,
                                                  const double* restrict s,
