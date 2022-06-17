@@ -1923,12 +1923,13 @@ void mul_genNM_genML_accum(// output
 #undef _MUL_CORE
 
 // Some common cases into convenient macros
-#define mul_gen33_gen33(P,A,B)        mul_genNM_genML(      P,3,1, 3,3,3, A,3,1, B,3,1, 1.0)
-#define mul_gen33_gen33_accum(P,A,B)  mul_genNM_genML_accum(P,3,1, 3,3,3, A,3,1, B,3,1, 1.0)
-#define mul_gen33t_gen33(P,A,B)       mul_genNM_genML(      P,3,1, 3,3,3, A,1,3, B,3,1, 1.0)
-#define mul_gen33t_gen33_accum(P,A,B) mul_genNM_genML_accum(P,3,1, 3,3,3, A,1,3, B,3,1, 1.0)
-#define mul_gen33_gen33t(P,A,B)       mul_genNM_genML(      P,3,1, 3,3,3, A,3,1, B,1,3, 1.0)
-#define mul_gen33_gen33t_accum(P,A,B) mul_genNM_genML_accum(P,3,1, 3,3,3, A,3,1, B,1,3, 1.0)
+#define mul_gen33_gen33(P,A,B,scale,ACCUM)  mul_genNM_genML ## ACCUM(P,3,1, 3,3,3, A,3,1, B,3,1, scale)
+#define mul_gen33t_gen33(P,A,B,scale,ACCUM) mul_genNM_genML ## ACCUM(P,3,1, 3,3,3, A,1,3, B,3,1, scale)
+#define mul_gen33_gen33t(P,A,B,scale,ACCUM) mul_genNM_genML ## ACCUM(P,3,1, 3,3,3, A,3,1, B,1,3, scale)
+#define mul_gen33_vec3(P,A,v,scale,ACCUM)   mul_genNM_genML ## ACCUM(P,1,1, 3,3,1, A,3,1, v,1,1, scale)
+#define mul_gen33t_vec3(P,A,v,scale,ACCUM)  mul_genNM_genML ## ACCUM(P,1,1, 3,3,1, A,1,3, v,1,1, scale)
+#define mul_vec3t_gen33(P,v,A,scale,ACCUM)  mul_genNM_genML ## ACCUM(P,3,1, 1,3,3, v,3,1, A,3,1, scale)
+#define mul_vec3t_gen33t(P,v,A,scale,ACCUM) mul_genNM_genML ## ACCUM(P,3,1, 1,3,3, v,3,1, A,1,3, scale)
 
 
 __attribute__((unused))
