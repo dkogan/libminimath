@@ -1902,8 +1902,8 @@ void mul_genNM_genML(// output
                      double* restrict P, int P_strideelems0, int P_strideelems1,
                      // input
                      int N, int M, int L,
-                     const double* A, int A_strideelems0, int A_strideelems1,
-                     const double* B, int B_strideelems0, int B_strideelems1,
+                     const double* restrict A, int A_strideelems0, int A_strideelems1,
+                     const double* restrict B, int B_strideelems0, int B_strideelems1,
                      const double scale)
 {
     _MUL_CORE(=);
@@ -1914,8 +1914,8 @@ void mul_genNM_genML_accum(// output
                            double* restrict P, int P_strideelems0, int P_strideelems1,
                            // input
                            int N, int M, int L,
-                           const double* A, int A_strideelems0, int A_strideelems1,
-                           const double* B, int B_strideelems0, int B_strideelems1,
+                           const double* restrict A, int A_strideelems0, int A_strideelems1,
+                           const double* restrict B, int B_strideelems0, int B_strideelems1,
                            const double scale)
 {
     _MUL_CORE(+=);
