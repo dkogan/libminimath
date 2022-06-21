@@ -1886,14 +1886,20 @@ Test program:
     return m[0]*c[0]+m[1]*c[1]+m[2]*c[2]+m[3]*c[3]+m[4]*c[4]+m[5]*c[5];
 }
 
-#define _MUL_CORE(OPERATION)                                            \
+#define _MUL_CORE(doreset) do {                                         \
     for(int iout=0; iout<N; iout++)                                     \
+    {                                                                   \
         for(int jout=0; jout<L; jout++)                                 \
+        {                                                               \
+            if(doreset) P[iout*P_strideelems0 + jout*P_strideelems1] = 0.0; \
             for(int k=0; k<M; k++)                                      \
-                P[iout*P_strideelems0 + jout*P_strideelems1] OPERATION  \
+                P[iout*P_strideelems0 + jout*P_strideelems1] +=         \
                     A[iout*A_strideelems0 + k   *A_strideelems1] *      \
                     B[k   *B_strideelems0 + jout*B_strideelems1] *      \
-                    scale
+                    scale;                                              \
+        }                                                               \
+    }                                                                   \
+} while(0)
 
 // Matrix multiplication. Dimensions (N,L) <- (N,M) * (M,L)
 __attribute__((unused))
@@ -1906,7 +1912,7 @@ void mul_genNM_genML(// output
                      const double* restrict B, int B_strideelems0, int B_strideelems1,
                      const double scale)
 {
-    _MUL_CORE(=);
+    _MUL_CORE(1);
 }
 __attribute__((unused))
 static
@@ -1918,7 +1924,7 @@ void mul_genNM_genML_accum(// output
                            const double* restrict B, int B_strideelems0, int B_strideelems1,
                            const double scale)
 {
-    _MUL_CORE(+=);
+    _MUL_CORE(0);
 }
 #undef _MUL_CORE
 
