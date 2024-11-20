@@ -9,6 +9,27 @@
 // Upper triangle is stored, in the usual row-major order.
 __attribute__((unused))
 static
+int index_sym33(int i, int j)
+{
+    // In the top-right triangle I have i<=j, and
+    //   index = N*i+j - sum(i, i=0..i)
+    //         = N*i+j - (i+1)*i/2
+    //         = (N*2 - i - 1)*i/2 + j
+    const int N=3;
+    if(i<=j) return (N*2-i-1)*i/2 + j;
+    else     return (N*2-j-1)*j/2 + i;
+}
+__attribute__((unused))
+static
+int index_sym33_assume_upper(int i, int j)
+{
+    const int N=3;
+    return (N*2-i-1)*i/2 + j;
+}
+
+// Upper triangle is stored, in the usual row-major order.
+__attribute__((unused))
+static
 int index_sym66(int i, int j)
 {
     // In the top-right triangle I have i<=j, and
@@ -1929,6 +1950,7 @@ void mul_genNM_genML_accum(// output
 #undef _MUL_CORE
 
 // Some common cases into convenient macros
+#define mul_gen23_gen33(P,A,B,scale,ACCUM)  mul_genNM_genML ## ACCUM(P,3,1, 2,3,3, A,3,1, B,3,1, scale)
 #define mul_gen33_gen33(P,A,B,scale,ACCUM)  mul_genNM_genML ## ACCUM(P,3,1, 3,3,3, A,3,1, B,3,1, scale)
 #define mul_gen33t_gen33(P,A,B,scale,ACCUM) mul_genNM_genML ## ACCUM(P,3,1, 3,3,3, A,1,3, B,3,1, scale)
 #define mul_gen33_gen33t(P,A,B,scale,ACCUM) mul_genNM_genML ## ACCUM(P,3,1, 3,3,3, A,3,1, B,1,3, scale)
